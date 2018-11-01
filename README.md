@@ -17,6 +17,19 @@ git clone https://github.com/ShadowWr3ck/nikto.git
 
 
 
+Once every program is compiled and installed you will want to edit these variables which will vary depending how and where you installed/compiled them.
+
+dnsmapdir="/someplace/somedir/dir/"
+dnsprog="yourfilename"
+ 
+#rainbowtbl="/somedir/someplace/somefile"
+#wordlist="/somedir/someplace/somefile"
+
+niktodir="/somedr/where/nikto/program/is/" 
+nikprog="thename" 
+
+scantodir_file="/some/dir/scanto.log"
+
 
 
 !! W.I.P !!
