@@ -8,7 +8,8 @@ This is SCTRICLY for educational purposes
 
 
 
-PREREQUISTE PROGRAMS 
+PREREQUISTE PROGRAMS:
+
 `sudo apt-get install dnsutils nmap`
 
 `git clone https://github.com/makefu/dnsmap.git`
