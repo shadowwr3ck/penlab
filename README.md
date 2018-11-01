@@ -12,7 +12,7 @@ PREREQUISTE PROGRAMS
 sudo apt-get install dnsutils nmap 
 git clone https://github.com/makefu/dnsmap.git
 git clone https://github.com/ShadowWr3ck/nikto.git
-# Choose a usr/password bruteforcer of your chosing ##
+ Choose a user/password bruteforcer of your chosing
 
 
 
