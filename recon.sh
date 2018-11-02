@@ -63,9 +63,6 @@ esac
 
 
 
-
-echo "Please be aware that web attacks differ greatly from network attacks"
-
 # CHOSE YOUR ATTACK #
 
 # IP attack  #
