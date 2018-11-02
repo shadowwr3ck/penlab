@@ -1,4 +1,5 @@
 #!/bin/bash
+#pooing farts
 scantodir_file="/some/dir/scanto.log"
 getip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 #Attack programs
