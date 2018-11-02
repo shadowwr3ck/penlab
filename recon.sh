@@ -5,13 +5,14 @@ getip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 # Location of nikto prgram #
 niktodir="/home/$USER/fun/nikto-master/program/"  # Where is the nikto directory???? #
 nikprog="nikto.pl"  # What have you named nikto ie instead of nikto.pl  it becomes web
-#Whatever you name nikto  always chmox +x newnam.  # 
+#Whatever you name nikto  always chmod +x newnam.  # 
 #End nikto stuff
 
 # DNSMAP #
 dnsmapdir="/someplace/somedir/dir/"
 dnsprog="yourfilename"
 # END DNSMAP 
+#Password Bruteforcer
 
 
 # END attack programs #
@@ -28,6 +29,7 @@ wordlist="/somedir/someplace/somefile"
 ### END VARIABLES ###
 
 
+# If nmap doesnt exist in your system Than install it "
 
 ## Program installation ##
 if ! which nmap > /dev/null; then
@@ -42,11 +44,13 @@ fi
 #Program installation
 #sudo apt install nmap proxychains -y 
 
+# SCRIPT START #
+
 # Is your network even secure? #
 
-echo "Are you using network protection Example;Direct to ISP or VPN/Proxy"
+echo "Are you using network protection/anonymization Example;Direct to ISP or VPN/Proxy"
 
-read -r -p "Are you secure? [y/N] " response
+read -r -p "Are you anonymized? [y/N] " response     # If you chose yes show your ip and move on #
 case "$response" in
     [yY][eE][sS]|[yY]) 
         echo " ${getip} is your ip"
@@ -59,33 +63,17 @@ esac
 
 
 
+
 echo "Please be aware that web attacks differ greatly from network attacks"
 
-
-
 # CHOSE YOUR ATTACK #
-read -r -p "ip or web attack? [ip/web] " attack
-if [ "$attack" = "web" ]; then  #If you typed web, Do the below.  If you chose, IP do the ip attack#
-	# Web attack #
-        echo "Enter web url without http/https ie www.whatever.tld or whatever.tld"
 
-        read web
-sleep 1
-# Initiating dnsmap
+# IP attack  #
 
-   dnsmap $web
-		echo "Sleeping for 8 seconds before next attack. Take this time to change your ip and mac"
-sleep 8
-		echo "Time testing with nikto"
-
-   /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web
-#        nmap -Pn $web > $scantodir_file
-
-else
-	#IP attack  #
-      echo "Enter IP address"
+      echo "Enter IP address.  You will be asked for hostname if the attack requires it"
         read ip 
-        nmap -Pn $ip | grep open 
+        nmap -Pn $ip | grep open   # Get the ports from the ip  #
+
 
 # Port attack selection #
 read -r -p " Choose a port to attack " portresponse
@@ -99,24 +87,15 @@ read -r -p " Choose a port to attack " portresponse
 	echo "${viassh}"
  # placeholder commands
   ;;
-	  *)
-	echo "Nothing chosen, exiting script"
-exit 0
+
+	  80|443)
+	echo " Enter hostname "
+	read web
+		 /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web
+			echo " Initiating dnsmap "
+			dnsmap $web
   ;;
+	*)
+		echo " Either no attack for selected port, or something went wrong"
+;;
 esac
-
-fi
-
-
-
-
-
-
-
-
-
-
-
-
-
-
