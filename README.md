@@ -15,8 +15,11 @@ This is SCTRICLY for educational purposes
 PREREQUISTE PROGRAMS:
 
 `sudo apt-get install dnsutils nmap`
+
 `sudo apt-get install hydra-gtk`
+
 `git clone https://github.com/makefu/dnsmap.git`
+
 `git clone https://github.com/ShadowWr3ck/nikto.git`
 
 
