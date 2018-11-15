@@ -12,6 +12,9 @@ This is STRICTLY for educational purposes
 
 
 
+I also would HIGHLY recommend to install/compile all of these programs within the penlab directory.    You dont have to, but if you dont, you will need to go through the script and change variables and run commands for programs that are not within the penlab directory
+
+
 PREREQUISTE PROGRAMS:
 
 `sudo apt-get install dnsutils nmap`
@@ -27,6 +30,11 @@ PREREQUISTE PROGRAMS:
 `https://github.com/rezasp/joomscan.git`
 
 `http://sourceforge.net/projects/uniscan/`
+
+
+
+
+
 
 
 
