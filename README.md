@@ -22,8 +22,10 @@ PREREQUISTE PROGRAMS:
 
 `git clone https://github.com/ShadowWr3ck/nikto.git`
 
+`gem install wpscan`
 
-Choose a user/password bruteforcer of your chosing.
+uniscan
+  http://sourceforge.net/projects/uniscan/
 
 
 
