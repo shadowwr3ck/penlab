@@ -26,8 +26,7 @@ PREREQUISTE PROGRAMS:
 
 `https://github.com/rezasp/joomscan.git`
 
-uniscan
-  `http://sourceforge.net/projects/uniscan/`
+`http://sourceforge.net/projects/uniscan/`
 
 
 
