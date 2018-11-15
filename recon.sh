@@ -1,18 +1,18 @@
 #!/bin/bash
 TARGET="$1"
 currentdir=$(pwd)
-FTP_WORDLIST="$currentdir/wordlists/ftp-default-userpass.txt"
-SSH_WORDLIST="$currentdir/wordlists/ssh-default-userpass.txt"
-USER_FILE="${currentdir}/wordlists/simple-users.txt"
-PASS_FILE="${currentdir}/wordlists/password.lst"
+FTP_WORDLIST='$currentdir/wordlists/ftp-default-userpass.txt'
+SSH_WORDLIST='$currentdir/wordlists/ssh-default-userpass.txt'
+USER_FILE='${currentdir}/wordlists/simple-users.txt'
+PASS_FILE='${currentdir}/wordlists/password.lst'
 getip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 #How many threads to use for bruteforce ##
-THREADS="1"
+THREADS='1'
 ##
 
 #Attack programs
 # Location of nikto prgram #
-niktodir="/home/$USER/nikto-master/program/"  # Where is the nikto directory???? #
+niktodir='/home/$USER/nikto-master/program/'  # Where is the nikto directory???? #
 nikprog="nikto.pl"  # What have you named nikto ie instead of nikto.pl  it becomes web
 #Whatever you name nikto  always chmod +x newnam  # 
 #End nikto stuff
@@ -35,11 +35,9 @@ COLOR1='\033[91m'
 
 
 if [ -z $TARGET ]; then
-	        echo -e "$COLOR1 + -- --=[Usage: recon.sh <target> "
+	        echo -e "$COLOR1 --=[Usage: recon.sh <target> "
   exit
 fi
-
-
 
 
 
@@ -100,13 +98,13 @@ read -r -p " Choose a port to attack " portresponse
 			unisan -qwgu $TARGET > $currentdir/logs/uniscan.log
 
 
-		read -r -p " Should we run an attack on wordpress? [y/n]" response
+		read -r -p " Is the TARGET running wordpress or joomla? [wps/joom]" response
 		  case $response in 
-	y)
-		wpscan --url $web
+	wps|wordpress)
+		wpscan --url $web > $currentdir/logs/wpscan.log
 	;;
-	n)
-		echo " No attack on wordpress? What now? "
+	joom|joomla)
+		joomscan -u $web > $currentdir/logs/joomscan.log
 	;;
 		esac
 ;;	

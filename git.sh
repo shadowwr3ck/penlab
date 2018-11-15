@@ -1,9 +1,7 @@
 #!/bin/bash
 
-
-cd ~/scripts/penlab
 git init
 git add -A
 read -r -p " Why are you updating this " comment
-git commit -m $comment
+git commit -m " $comment "
 git push origin dev 
