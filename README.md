@@ -1,10 +1,10 @@
 # penlab
-Attack and recon script for Education uses and Penatration testing labs
+Attack and recon script for Education uses and Penetration testing labs
 
 This  is a script to make your life easier when working in an  infoSEC lab. 
-For Educational uses only.  I have tested this only on servers that are authorizex to do so. 
-I will not be held accountable for any misuse of this tool up to and including any unlawful/lawful actions.
-This is SCTRICLY for educational purposes
+For Educational uses only.  I have tested this only on servers and devices that are authorized to do so. 
+I will not be held accountable for any misuse of this tool up to and including any unlawful actions.
+This is STRICTLY for educational purposes
 
 
 
