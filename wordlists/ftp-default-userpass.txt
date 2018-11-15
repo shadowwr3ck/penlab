@@ -1,4 +1,5 @@
 anonymous:anonymous
+anon:
 anonymous:sp@rta.com
 admin:admin
 admin:password
@@ -19,6 +20,7 @@ admin:nas
 Root:wago 
 Admin:wago 
 User:user 
+user:user
 Guest:guest 
 ftp:ftp
 admin:password
