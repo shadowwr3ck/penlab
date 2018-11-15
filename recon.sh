@@ -1,11 +1,15 @@
 #!/bin/bash
-FTP_WORDLIST="/usr/share/brutex/wordlists/ftp-default-userpass.txt"
-SSH_WORDLIST="/usr/share/brutex/wordlists/ssh-default-userpass.txt"
-
+TARGET="$1"
+currentdir=$(pwd)
+FTP_WORDLIST="$currentdir/wordlists/ftp-default-userpass.txt"
+SSH_WORDLIST="$currentdir/wordlists/ssh-default-userpass.txt"
+USER_FILE="${currentdir}/wordlists/simple-users.txt"
+PASS_FILE="${currentdir}/wordlists/password.lst"
+getip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 #How many threads to use for bruteforce ##
 THREADS="1"
-scantodir_file="/some/dir/scanto.log"
-getip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
+##
+
 #Attack programs
 # Location of nikto prgram #
 niktodir="/home/$USER/nikto-master/program/"  # Where is the nikto directory???? #
@@ -19,11 +23,24 @@ dnsprog="dnsmap"
 # END DNSMAP 
 # How are you going to flood the bitch #
 flood='some commands and locations on how you want to flood the user'
+
 # If you have any MASTER wordlists you wanna use ##
 #rainbowtbl="/somedir/someplace/somefile"
 #wordlist="/somedir/someplace/somefile"
 
+
+COLOR1='\033[91m'
+
 ### END VARIABLES ###
+
+
+if [ -z $TARGET ]; then
+	        echo -e "$COLOR1 + -- --=[Usage: recon.sh <target> "
+  exit
+fi
+
+
+
 
 
 
@@ -44,20 +61,18 @@ case "$response" in
         ;;
 esac
 
+#### ATTACK START ####
 
-# CHOSE YOUR ATTACK #
-
-# IP attack  #
-
-      echo "Enter IP address to attack.  You will be asked for hostname if the attack requires it"
-        read -r ip 
-        nmap -Pn $ip | grep open   # Get the ports from the ip  #
+	echo " Initiating NMAP scan on $TARGET. "
+       	  nmap -Pn $TARGET | grep open   # Get the ports from the ip  target
 
 
 # Port attack selection #
 read -r -p " Choose a port to attack " portresponse
   case "$portresponse" in 
-  
+
+	# FTP ATTACK #
+
 	    21)
 	echo "Time for an ftp attack.  Cracking against ip"
         	hydra -C $FTP_WORDLIST $ip ftp -t $THREADS -e ns
@@ -65,25 +80,44 @@ read -r -p " Choose a port to attack " portresponse
 	read -r -p " Enter hostname without http/s://  " web
                 hydra -C $FTP_WORDLIST $web ftp -t $THREADS -e ns
 ;;
+	# SSH ATTACK #
+
        	    22)  # If you type 22 Do this attack else do another attack 
    	echo "Time for an ssh bruteforce"
-	        hydra -C $SSH_WORDLIST $ip ssh -t $THREADS -e ns
-
+	        hydra -C $SSH_WORDLIST $TARGET ssh -t $THREADS -e ns
+		hydra -L $USER_FILE -P $PASS_FILE $TARGET ssh -t $THREADS -e ns
 ;;
          flood)
 	echo " Flood the bitch " 
 	echo "${flood}"
 ;;
      80|443|53)
-#	echo " Enter hostname "
 	read -r -p " Enter Hostname :" web
-		 /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web
+		 /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web > $currentdir/logs/nikto.log
 			echo " Initiating dnsmap "
-			dnsmap $web
-			
-  ;;
+			dnsmap $web > $currentdir/logs/dnsmap.log
+			echo " Time for uniscan " 
+			unisan -qwgu $TARGET > $currentdir/logs/uniscan.log
 
+
+		read -r -p " Should we run an attack on wordpress? [y/n]" response
+		  case $response in 
+	y)
+		wpscan --url $web
+	;;
+	n)
+		echo " No attack on wordpress? What now? "
+	;;
+		esac
+;;	
+	# SMTP ATTACK # 
+	    23)
+	echo " Nothing configured for smtp. Feel free to co configure it yourself"
+;;
 	*)
 		echo " Either no attack for selected port, or something went wrong "
 ;;
 esac
+
+
+
