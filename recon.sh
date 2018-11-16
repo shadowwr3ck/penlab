@@ -6,7 +6,9 @@ SSH_WORDLIST='$currentdir/wordlists/ssh-default-userpass.txt'
 USER_FILE='${currentdir}/wordlists/simple-users.txt'
 PASS_FILE='${currentdir}/wordlists/password.lst'
 MERGED_USERPASS='${currentdir}/wordlists/merged-userpass.txt'
-MASTER_PASS='${currentdir}/wordlists/master_pass.list'
+MASTER_PASS='${currentdir}/wordlists/master_pass.lst'
+
+
 getip="$(dig +short myip.opendns.com @resolver1.opendns.com)"
 #How many threads to use for bruteforce ##
 THREADS='1'
@@ -14,13 +16,16 @@ THREADS='1'
 
 #Attack programs
 # Location of nikto prgram #
-niktodir='/home/$USER/nikto-master/program/'  # Where is the nikto directory???? #
+niktodir='${currentdir}/nikto-master/program/'  # Where is the nikto directory???? #
 nikprog="nikto.pl"  # What have you named nikto ie instead of nikto.pl  it becomes web
 #Whatever you name nikto  always chmod +x newnam  # 
 #End nikto stuff
 
+#joomla scanner
+joom="$(/usr/bin/perl ${currentdir}/joomscan/joomscan.pl)"
+
 # DNSMAP #
-dnsmapdir="/usr/bin/dnsmap"
+dnsmapdir='/usr/bin/dnsmap'
 dnsprog="dnsmap"
 # END DNSMAP 
 # How are you going to flood the bitch #
@@ -104,7 +109,7 @@ read -r -p " Choose a port to attack " portresponse
 		wpscan --url $web > $currentdir/logs/wpscan.log
 		    ;;
 	  joom|joomla)
-		joomscan -u $web > $currentdir/logs/joomscan.log
+		$joom -u $web > $currentdir/logs/joomscan.log
 	   	    ;;
 		esac
 ;;	
