@@ -3,14 +3,21 @@ currentdate=$(date +'%m-%d-%Y')
 TARGET="$1"
 currentdir=$(pwd)   # $(pwd) is the directory your terminal is on.   
 
-#LOG FILE DIR #
+
+## UNCOMMENT TO TURN ON IF YOU WANT LOGGING ##
+logdir="$currentdir/logs"
+makenmap=$(mkdir -p $logdir/nmap)
+makenikto=$(mkdir -p $logdir/nikto)
+makednsmap=$(mkdir -p $logdir/dnsmap)
+makejoom=$(mkdir -p $logdir/joomscan)
+makewps=$(mkdir -p $logdir/dnsmap)
+makeuni=$(mkdir -p $logdir/uniscan)
 unilog="${currentdir}/logs/uniscan/uniscan_${TARGET}-${currentdate}"
 dnsmaplog="${currentdir}/logs/dnsmap/dnsmap_${TARGET}-${currentdate}"
 niktolog="${currentdir}/logs/nikto/nikto_${TARGET}-${currentdate}"
 joomlog="${currentdir}/logs/joomscan/joomscan_${TARGET}-${currentdate}"
 wpslog="$currentdir/logs/wpscan/wps_${TARGET}-${currentdate}"
 nmaplog="$currentdir/logs/nmap/nmap_${TARGET}-${currentdate}"
-
 
 
 FTP_WORDLIST='${currentdir}/wordlists/ftp-default-userpass.txt'
@@ -29,13 +36,11 @@ THREADS='1'
 #Attack programs
 # Location of nikto prgram #
 niktodir='${currentdir}/nikto-master/program/'  # Where is the nikto directory???? #
-nikprog="nikto.pl"  # What have you named nikto ie instead of nikto.pl  it becomes web
-#Whatever you name nikto  always chmod +x newnam  # 
+nikprog="nikto.pl"  # What have you named nikto ie instead of nikto.pl 
 #End nikto stuff
 
 #joomla scanner
 joom="${currentdir}/joomscan/joomscan.pl"
-
 
 # DNSMAP #
 dnsmapdir='/usr/bin/dnsmap'
@@ -44,17 +49,12 @@ dnsprog="dnsmap"
 # How are you going to flood the bitch #
 flood='some commands and locations on how you want to flood the user'
 
-# If you have any MASTER wordlists you wanna use ##
-#rainbowtbl="/somedir/someplace/somefile"
-#wordlist="/somedir/someplace/somefile"
-
 NOCOLOR='\033[0m'
 RED='\033[91m'
 CYAN='\033[38;5;45m'
 
 
 ### END VARIABLES ###
-# Enable the script to be proxied
 
 
 if [ -z $TARGET ]; then  # user entered nothing after recon,sh  so exit #
@@ -62,6 +62,9 @@ if [ -z $TARGET ]; then  # user entered nothing after recon,sh  so exit #
   exit
 fi
 # User entered an ip. Moving on and saving for later use in script 
+
+
+echo "$CYAN Everything logs to $logdir $NOCOLOR"
 
 
 
@@ -85,13 +88,11 @@ esac
 #### ATTACK START ####
 
 	echo " Initiating NMAP scan on $TARGET. "
+		$makenmap
 		touch $nmaplog
        	  nmap -Pn $TARGET | grep open | tee $nmaplog # Get the ports from the ip  target
 
-
 # Port attack selection #
-echo "$CYAN Everything here also logs to ./penlab/logs $NOCOLOR " 
-
 
 read -r -p " Choose a port to attack " portresponse
   case "$portresponse" in 
@@ -116,10 +117,13 @@ read -r -p " Choose a port to attack " portresponse
 ;;
      80|443|53)
 	read -r -p " Enter Hostname: " web
+	   $makenikto
 	   touch $niktolog
 		 /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web | tee $niktolog
 			echo " Initiating dnsmap "
+	   $makednsmap
 	   touch $dnsmaplog
+	   $makeuni
 	   touch $unilog
 			dnsmap $web | tee $dnsmaplog
 			echo " Time for uniscan " 
@@ -129,10 +133,12 @@ read -r -p " Choose a port to attack " portresponse
 		read -r -p " Is the TARGET running wordpress or joomla? [wps/joom]" response
 		  case $response in 
 	wps|wordpress)
+	   $makewps
 	   touch $wpslog
 		wpscan --url $web | tee $wpslog
 		    ;;
 	  joom|joomla)
+	   $makejoom
 	   touch $joomlog
 		/usr/bin/perl $joom -u $web | tee $joomlog
 	   	    ;;
