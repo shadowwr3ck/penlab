@@ -1,8 +1,20 @@
 #!/bin/bash
+currentdate=$(date +'%m-%d-%Y')
 TARGET="$1"
-currentdir=$(pwd)
-FTP_WORDLIST='$currentdir/wordlists/ftp-default-userpass.txt'
-SSH_WORDLIST='$currentdir/wordlists/ssh-default-userpass.txt'
+currentdir=$(pwd)   # $(pwd) is the directory your terminal is on.   
+
+#LOG FILE DIR #
+unilog="${currentdir}/logs/uniscan/uniscan_${TARGET}-${currentdate}"
+dnsmaplog="${currentdir}/logs/dnsmap/dnsmap_${TARGET}-${currentdate}"
+niktolog="${currentdir}/logs/nikto/nikto_${TARGET}-${currentdate}"
+joomlog="${currentdir}/logs/joomscan/joomscan_${TARGET}-${currentdate}"
+wpslog="$currentdir/logs/wpscan/wps_${TARGET}-${currentdate}"
+nmaplog="$currentdir/logs/nmap/nmap_${TARGET}-${currentdate}"
+
+
+
+FTP_WORDLIST='${currentdir}/wordlists/ftp-default-userpass.txt'
+SSH_WORDLIST='${currentdir}/wordlists/ssh-default-userpass.txt'
 USER_FILE='${currentdir}/wordlists/simple-users.txt'
 PASS_FILE='${currentdir}/wordlists/password.lst'
 MERGED_USERPASS='${currentdir}/wordlists/merged-userpass.txt'
@@ -22,7 +34,8 @@ nikprog="nikto.pl"  # What have you named nikto ie instead of nikto.pl  it becom
 #End nikto stuff
 
 #joomla scanner
-joom="$(/usr/bin/perl ${currentdir}/joomscan/joomscan.pl)"
+joom="${currentdir}/joomscan/joomscan.pl"
+
 
 # DNSMAP #
 dnsmapdir='/usr/bin/dnsmap'
@@ -35,18 +48,20 @@ flood='some commands and locations on how you want to flood the user'
 #rainbowtbl="/somedir/someplace/somefile"
 #wordlist="/somedir/someplace/somefile"
 
+NOCOLOR='\033[0m'
 RED='\033[91m'
+CYAN='\033[38;5;45m'
 
 
 ### END VARIABLES ###
 # Enable the script to be proxied
 
 
-if [ -z $TARGET ]; then
+if [ -z $TARGET ]; then  # user entered nothing after recon,sh  so exit #
 	        echo -e "$RED--=[Usage: recon.sh <target> "
   exit
 fi
-
+# User entered an ip. Moving on and saving for later use in script 
 
 
 
@@ -70,12 +85,17 @@ esac
 #### ATTACK START ####
 
 	echo " Initiating NMAP scan on $TARGET. "
-       	  nmap -Pn $TARGET | grep open   # Get the ports from the ip  target
+		touch $nmaplog
+       	  nmap -Pn $TARGET | grep open | tee $nmaplog # Get the ports from the ip  target
 
 
 # Port attack selection #
+echo "$CYAN Everything here also logs to ./penlab/logs $NOCOLOR " 
+
+
 read -r -p " Choose a port to attack " portresponse
   case "$portresponse" in 
+
 
 	# FTP ATTACK #
 
@@ -95,33 +115,35 @@ read -r -p " Choose a port to attack " portresponse
 	echo "${flood}"
 ;;
      80|443|53)
-	read -r -p " Enter Hostname :" web
-		 /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web > $currentdir/logs/nikto.log
+	read -r -p " Enter Hostname: " web
+	   touch $niktolog
+		 /usr/bin/proxychains /usr/bin/perl $niktodir$nikprog -url $web | tee $niktolog
 			echo " Initiating dnsmap "
-			dnsmap $web > $currentdir/logs/dnsmap.log
+	   touch $dnsmaplog
+	   touch $unilog
+			dnsmap $web | tee $dnsmaplog
 			echo " Time for uniscan " 
-			unisan -qwgu $TARGET > $currentdir/logs/uniscan.log
+			unisan -qwgu $TARGET | tee $unilog
 
 
 		read -r -p " Is the TARGET running wordpress or joomla? [wps/joom]" response
 		  case $response in 
 	wps|wordpress)
-		wpscan --url $web > $currentdir/logs/wpscan.log
+	   touch $wpslog
+		wpscan --url $web | tee $wpslog
 		    ;;
 	  joom|joomla)
-		$joom -u $web > $currentdir/logs/joomscan.log
+	   touch $joomlog
+		/usr/bin/perl $joom -u $web | tee $joomlog
 	   	    ;;
 		esac
 ;;	
 	# SMTP ATTACK # 
 	    23)
-	echo " Nothing configured for smtp. Feel free to co configure it yourself"
+	echo " Nothing configured for smtp. Feel free to configure it yourself"
 ;;
 	*)
 		echo " Either no attack for selected port, or something went wrong "
 
 ;;
 esac
-
-
-
